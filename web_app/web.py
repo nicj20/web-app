@@ -1,0 +1,25 @@
+import streamlit as st
+import helpers
+
+
+todos = helpers.get_todos(filepath='web_app/todos.txt')
+def add_todo():
+   todo = st.session_state['new_todo'] + '\n'
+   todos.append(todo)
+   helpers.write_todos(todos,filepath='web_app/todos.txt')
+   st.session_state["new_todo"] = ""
+
+
+st.title('My Todo App')
+st.subheader('This app is to increase your productivity :)')
+
+for index, todo in enumerate(todos):
+    checkbox = st.checkbox(todo, key=todo)
+    if checkbox:
+        todos.pop(index)
+        helpers.write_todos(todos, filepath='web_app/todos.txt')
+        del st.session_state[todo]
+        st.experimental_rerun()
+
+st.text_input(label='', placeholder='Enter a new to-do',
+              on_change=add_todo, key='new_todo')
